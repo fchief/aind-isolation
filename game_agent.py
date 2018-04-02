@@ -372,7 +372,8 @@ class AlphaBetaPlayer(IsolationPlayer):
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-
+        if depth == 0:
+            return self.score(game,self)
 
         # TODO: finish this function!
         legal_moves = game.get_legal_moves()
@@ -380,10 +381,8 @@ class AlphaBetaPlayer(IsolationPlayer):
         if not legal_moves:
             return (-1,-1)
         best_move = legal_moves[0]
-        if depth == 0:
-            return self.score(game,self)
-        
-        for m in legal_moves:
+
+        for m in game.get_legal_moves():
             v = self.min_value(game.forecast_move(m), depth -1, alpha, beta)
             if v > alpha:
                 alpha = v
@@ -404,10 +403,9 @@ class AlphaBetaPlayer(IsolationPlayer):
         v = float("inf")
         for m in game.get_legal_moves():
             v = min(v, self.max_value(game.forecast_move(m), depth-1, alpha, beta))
-            beta = max(beta, v)
             if v <= alpha:
                 return v
-        
+            beta = min(beta, v)
         return v
 
 
@@ -424,10 +422,9 @@ class AlphaBetaPlayer(IsolationPlayer):
         v = float("-inf")
         for m in game.get_legal_moves():
             v = max(v, self.min_value(game.forecast_move(m), depth-1, alpha, beta))
-            alpha = max(alpha, v)
             if v >= beta:
                 return v
-            
+            alpha = max(alpha, v)
         return v
 
     def is_terminal(self, game, depth):
