@@ -3,7 +3,8 @@ test your agent's strength against a set of known agents using tournament.py
 and include the results in your report.
 """
 import random
-
+from sample_players import (open_move_score,
+                            improved_score, center_score)
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -35,7 +36,17 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    opponent = game.get_opponent(player)
+    my_legal_moves = game.get_legal_moves()
+    opp_legal_moves = game.get_legal_moves(opponent)
+    heuristic_val = float(0.2*len(my_legal_moves) - 0.8*len(opp_legal_moves))
+    return heuristic_val
 
 
 def custom_score_2(game, player):
@@ -61,7 +72,16 @@ def custom_score_2(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    open_move = open_move_score(game, player)
+    correlated = improved_score(game, player)
+    d2c = center_score(game, player)
+    return float(0.2*open_move + 0.3*correlated + 0.5*d2c)
 
 
 def custom_score_3(game, player):
@@ -87,7 +107,22 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    open_move = open_move_score(game, player)
+    correlated = improved_score(game, player)
+    d2c = center_score(game, player)
+    # float(0.3*open_move + 0.4*correlated + 0.3*d2c)
+    # float(0.7*correlated + 0.3*d2c)
+    # float(0.3*correlated + 0.7*open_move)
+    # float(0.7*correlated + 0.3*open_move)
+    # float(correlated + open_move + d2c)
+    # float(1*correlated + 2*open_move)
+    return float(0.5*correlated + 0.8*open_move)
 
 
 class IsolationPlayer:
