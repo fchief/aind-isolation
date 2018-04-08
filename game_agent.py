@@ -45,7 +45,7 @@ def custom_score(game, player):
     opponent = game.get_opponent(player)
     my_legal_moves = game.get_legal_moves()
     opp_legal_moves = game.get_legal_moves(opponent)
-    heuristic_val = float(0.2*len(my_legal_moves) - 0.8*len(opp_legal_moves))
+    heuristic_val = float(1.5*len(my_legal_moves) - 2*len(opp_legal_moves))
     return heuristic_val
 
 
@@ -81,7 +81,7 @@ def custom_score_2(game, player):
     open_move = open_move_score(game, player)
     correlated = improved_score(game, player)
     d2c = center_score(game, player)
-    return float(0.2*open_move + 0.3*correlated + 0.5*d2c)
+    return open_move + correlated + d2c
 
 
 def custom_score_3(game, player):
@@ -113,16 +113,20 @@ def custom_score_3(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    open_move = open_move_score(game, player)
-    correlated = improved_score(game, player)
-    d2c = center_score(game, player)
+    # open_move = open_move_score(game, player)
+    # correlated = improved_score(game, player)
+    # d2c = center_score(game, player)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
     # float(0.3*open_move + 0.4*correlated + 0.3*d2c)
-    # float(0.7*correlated + 0.3*d2c)
+    # 
     # float(0.3*correlated + 0.7*open_move)
     # float(0.7*correlated + 0.3*open_move)
     # float(correlated + open_move + d2c)
     # float(1*correlated + 2*open_move)
-    return float(0.5*correlated + 0.8*open_move)
+    # float(0.5*correlated + 0.8*open_move)
+    return float(own_moves - 0.7*opp_moves)
 
 
 class IsolationPlayer:
